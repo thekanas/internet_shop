@@ -1,19 +1,58 @@
 plugins {
     id 'java'
+    id 'war'
+    id 'jacoco'
 }
 
 group 'by.stolybko'
-version '1.0-SNAPSHOT'
+version '1.0'
+
+java {
+    sourceCompatibility = JavaLanguageVersion.of(17)
+    targetCompatibility = JavaLanguageVersion.of(17)
+}
 
 repositories {
     mavenCentral()
 }
 
+ext {
+    jacksonVersion = '2.16.0'
+    junitVersion = '5.9.2'
+    mockitoVersion = '5.6.0'
+    mapstructVersion = '1.5.5.Final'
+    testcontainers_version = "1.19.4"
+}
+
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    implementation  'org.postgresql:postgresql:42.6.0'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    implementation 'org.apache.tomcat:tomcat-jdbc:10.1.13'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+    implementation 'org.yaml:snakeyaml:2.1'
+
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    //testImplementation "org.testcontainers:testcontainers:$testcontainers_version"
+    //testImplementation "org.testcontainers:junit-jupiter:$testcontainers_version"
+    testImplementation "org.testcontainers:postgresql:$testcontainers_version"
 }
 
 test {
     useJUnitPlatform()
 }
+
+test.finalizedBy jacocoTestReport
+jacocoTestReport.dependsOn test
