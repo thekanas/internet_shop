@@ -4,7 +4,6 @@ import by.stolybko.db.ConnectionManager;
 import by.stolybko.model.Order;
 import by.stolybko.model.Product;
 import by.stolybko.repository.OrderRepository;
-import by.stolybko.repository.mapper.BaseResultSetMapper;
 import by.stolybko.repository.mapper.OrderResultSetMapper;
 
 import java.sql.Connection;
@@ -294,26 +293,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         return findByIdWithProduct(uuid);
     }
-
-
-
-    /*@Override
-    public Optional<Order> update(UUID id, Order order) {
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)) {
-
-            preparedStatement.setObject(1, order.getCustomerId());
-            preparedStatement.setObject(2, id);
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
-
-        return Optional.of(order);
-
-    }*/
 
     private static final String DELETE_BY_ID = "DELETE FROM orders WHERE orderId = ?";
 

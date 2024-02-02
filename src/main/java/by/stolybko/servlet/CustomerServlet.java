@@ -74,8 +74,6 @@ public class CustomerServlet extends HttpServlet {
 
             CustomerRequestDto customerRequestDto = objectMapper.readValue(collect, CustomerRequestDto.class);
 
-
-            //CustomerRequestDto customerRequestDto = objectMapper.readValue(req.getReader().lines().collect(Collectors.joining()), CustomerRequestDto.class);
             CustomerResponseDto customerResponseDto = customerService.save(customerRequestDto);
 
             resp.setContentType(CONTENT_TYPE);

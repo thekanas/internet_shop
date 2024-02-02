@@ -1,6 +1,5 @@
 package by.stolybko.service.dto;
 
-import by.stolybko.model.Product;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
