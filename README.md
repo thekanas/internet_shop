@@ -145,6 +145,5 @@ DELETE http://localhost:8080/orders?id=392a0725-13ca-4f5c-9320-de315386d43e
 
 Отчёт о покрытии тестами
 ---
-Схема базы данных:  
 ![test1](img/test1.png)
 ![test2](img/test2.png)

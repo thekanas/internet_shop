@@ -104,6 +104,8 @@ public class ProductRepositoryImpl implements ProductRepository {
             preparedStatement.setObject(3, id);
             preparedStatement.executeUpdate();
 
+            product.setId(id);
+
         } catch (SQLException e) {
             e.printStackTrace();
             return Optional.empty();

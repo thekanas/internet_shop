@@ -91,7 +91,8 @@ class OrderRepositoryImplTest extends BaseRepositoryTest {
     void updateTest() {
         UUID uuid = UUID.fromString("da4970c5-5053-4b48-87db-32693abe6e76");
         UUID customerUuid = UUID.fromString("cd0ebac6-2b2d-465c-ab6f-752dcd8cc7ac");
-        Order order = new Order(uuid, customerUuid, LocalDateTime.MIN, new ArrayList<>());
+        Product product1 = productRepository.findById(UUID.fromString("432c2ccf-91ba-436b-beea-694fd8ac12d9")).get();
+        Order order = new Order(uuid, customerUuid, LocalDateTime.MIN, List.of(product1));
 
         Optional<Order> updatedOrder = orderRepository.update(uuid, order);
 

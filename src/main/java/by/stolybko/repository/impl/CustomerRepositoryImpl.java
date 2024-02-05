@@ -104,6 +104,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             preparedStatement.setObject(3, id);
             preparedStatement.executeUpdate();
 
+            customer.setId(id);
+
         } catch (SQLException e) {
             e.printStackTrace();
             return Optional.empty();
