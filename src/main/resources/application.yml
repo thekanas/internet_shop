@@ -1,0 +1,6 @@
+db:
+  user: postgres
+  password: pass
+  url: jdbc:postgresql://localhost:5433/internet_shop
+  driver: org.postgresql.Driver
+  pool.size: 10
