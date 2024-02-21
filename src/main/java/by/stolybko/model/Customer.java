@@ -1,14 +1,29 @@
 package by.stolybko.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Customer extends BaseEntity<UUID> {
+@Entity
+@Table(name = "customer")
+public class Customer {
 
+    @Id
+    @Column(name = "customerid")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String fullName;
     private String email;
+
+    @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
     public Customer() {
@@ -24,7 +39,6 @@ public class Customer extends BaseEntity<UUID> {
         return id;
     }
 
-    @Override
     public void setId(UUID id) {
         this.id = id;
     }

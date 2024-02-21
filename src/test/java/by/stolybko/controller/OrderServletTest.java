@@ -1,4 +1,4 @@
-package by.stolybko.servlet;
+package by.stolybko.controller;
 
 
 import by.stolybko.service.dto.OrderRequestDto;
@@ -37,7 +37,7 @@ class OrderServletTest {
     private OrderServiceImpl orderService;
 
     @InjectMocks
-    private OrderServlet orderServlet;
+    private OrderController orderServlet;
 
     @Test
     void doGetWithIdShouldReturnOrder_WhenInvoke() throws IOException, ServletException {

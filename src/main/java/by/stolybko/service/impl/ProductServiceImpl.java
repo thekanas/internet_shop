@@ -7,19 +7,26 @@ import by.stolybko.service.ProductService;
 import by.stolybko.service.dto.ProductRequestDto;
 import by.stolybko.service.dto.ProductResponseDto;
 import by.stolybko.service.mapper.ProductDtoMapper;
+
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
+@Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
     
     private final ProductRepository productRepository;
     private final ProductDtoMapper productDtoMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository, ProductDtoMapper productDtoMapper) {
         this.productRepository = productRepository;
-        this.productDtoMapper = Mappers.getMapper(ProductDtoMapper.class);
+        this.productDtoMapper = productDtoMapper;
     }
 
 
@@ -31,8 +38,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean deleteById(UUID id) {
-        return productRepository.deleteById(id);
+    @Transactional
+    public void deleteById(UUID id) {
+        productRepository.deleteById(id);
     }
 
     @Override
@@ -43,15 +51,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponseDto save(ProductRequestDto productRequestDto) {
-        Product savedProduct = productRepository.save(productDtoMapper.toEntity(productRequestDto)).orElseThrow();
+        Product savedProduct = productRepository.save(productDtoMapper.toEntity(productRequestDto));
         return productDtoMapper.toDto(savedProduct);
     }
 
     @Override
+    @Transactional
     public ProductResponseDto update(UUID id, ProductRequestDto productRequestDto) {
-        Product updatedProduct = productRepository.update(id, productDtoMapper.toEntity(productRequestDto))
-                .orElseThrow(() -> new EntityNotFoundException(id, Product.class));
+        Product updateProduct = productDtoMapper.toEntity(productRequestDto);
+        updateProduct.setId(id);
+        Product updatedProduct = productRepository.save(updateProduct);
         return productDtoMapper.toDto(updatedProduct);
     }
 }

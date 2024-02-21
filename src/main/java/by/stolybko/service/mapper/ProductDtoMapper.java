@@ -6,7 +6,7 @@ import by.stolybko.service.dto.ProductResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductDtoMapper {
 
     Product toEntity(ProductRequestDto productRequestDto);

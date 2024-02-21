@@ -1,64 +1,44 @@
-package by.stolybko.servlet;
+package by.stolybko.controller;
 
-import by.stolybko.config.AppConfig;
 import by.stolybko.service.ProductService;
-import by.stolybko.service.dto.ProductRequestDto;
 import by.stolybko.service.dto.ProductResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static by.stolybko.util.Constants.CONTENT_TYPE;
 
-@WebServlet(name = "ProductServlet", value = "/products")
-public class ProductServlet extends HttpServlet {
+@RestController
+@RequestMapping("/products")
+public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
-    @Override
-    public void init(ServletConfig config) {
-        this.productService = AppConfig.getProductService();
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-            String id = req.getParameter("id");
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            if (id == null) {
-
-                List<ProductResponseDto> productResponseDtoList = productService.getAll();
-
-                resp.setContentType(CONTENT_TYPE);
-                resp.setStatus(200);
-
-                objectMapper.writeValue(resp.getWriter(), productResponseDtoList);
-
-            } else {
-
-                ProductResponseDto productResponseDto = productService.getById(UUID.fromString(id));
-
-                resp.setContentType(CONTENT_TYPE);
-                resp.setStatus(200);
-
-                objectMapper.writeValue(resp.getWriter(), productResponseDto);
-            }
-
-        } catch (Exception e) {
-            resp.setStatus(400);
-        }
+    @GetMapping()
+    public ResponseEntity<List<ProductResponseDto>> getAllProduct() {
+        List<ProductResponseDto> productResponseDtoList = productService.getAll();
+        return ResponseEntity.ok().body(productResponseDtoList);
     }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<ProductResponseDto> getProductByUuid(@PathVariable UUID uuid) {
+        ProductResponseDto productResponseDto = productService.getById(uuid);
+        return ResponseEntity.ok().body(productResponseDto);
+    }
+
+
+
+    /*
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -114,19 +94,16 @@ public class ProductServlet extends HttpServlet {
                 resp.setStatus(400);
             } else {
 
-                boolean delete = productService.deleteById(UUID.fromString(id));
+                productService.deleteById(UUID.fromString(id));
 
-                if (delete) {
-                    resp.setContentType(CONTENT_TYPE);
-                    resp.setStatus(200);
-                } else {
-                    resp.setStatus(404);
-                }
+                resp.setContentType(CONTENT_TYPE);
+                resp.setStatus(200);
+
             }
 
         } catch (Exception e) {
             resp.setStatus(400);
         }
     }
-
+*/
 }

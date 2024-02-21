@@ -1,11 +1,24 @@
 package by.stolybko.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Table(name = "product")
 public class Product {
 
+    @Id
+    @Column(name = "productid")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
     private BigDecimal price;

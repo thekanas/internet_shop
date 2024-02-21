@@ -22,11 +22,17 @@ ext {
     mockitoVersion = '5.6.0'
     mapstructVersion = '1.5.5.Final'
     testcontainers_version = "1.19.4"
+    springVersion = '6.1.2'
+    hibernateVersion = '6.4.1.Final'
 }
 
 dependencies {
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation "org.springframework:spring-orm:${springVersion}"
+    implementation 'org.springframework.data:spring-data-jpa:3.2.2'
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
 
-    implementation  'org.postgresql:postgresql:42.6.0'
+    implementation 'org.postgresql:postgresql:42.6.0'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'org.apache.tomcat:tomcat-jdbc:10.1.13'
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
@@ -45,13 +51,15 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
-    //testImplementation "org.testcontainers:testcontainers:$testcontainers_version"
-    //testImplementation "org.testcontainers:junit-jupiter:$testcontainers_version"
     testImplementation "org.testcontainers:postgresql:$testcontainers_version"
 }
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add('-parameters')
 }
 
 test.finalizedBy jacocoTestReport

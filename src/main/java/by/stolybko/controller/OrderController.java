@@ -1,66 +1,50 @@
-package by.stolybko.servlet;
+package by.stolybko.controller;
 
-import by.stolybko.config.AppConfig;
 import by.stolybko.service.OrderService;
-import by.stolybko.service.dto.OrderRequestDto;
 import by.stolybko.service.dto.OrderResponseDto;
 import by.stolybko.service.dto.OrderResponseDtoWithProduct;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static by.stolybko.util.Constants.CONTENT_TYPE;
 
-@WebServlet(name = "OrderServlet", value = "/orders")
-public class OrderServlet extends HttpServlet {
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
 
-    private OrderService orderService;
 
-    @Override
-    public void init(ServletConfig config) {
-        this.orderService = AppConfig.getOrderService();
+    private final OrderService orderService;
+
+    @Autowired
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-            String id = req.getParameter("id");
-            ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
-            if (id == null) {
-
-                List<OrderResponseDto> orderResponseDtoList = orderService.getAll();
-
-                resp.setContentType(CONTENT_TYPE);
-                resp.setStatus(200);
-
-                objectMapper.writeValue(resp.getWriter(), orderResponseDtoList);
-
-            } else {
-
-                OrderResponseDtoWithProduct orderResponseDto = orderService.getByIdWithProduct(UUID.fromString(id));
-
-                resp.setContentType(CONTENT_TYPE);
-                resp.setStatus(200);
-
-                objectMapper.writeValue(resp.getWriter(), orderResponseDto);
-            }
-
-        } catch (Exception e) {
-            resp.setStatus(400);
-        }
+    @GetMapping()
+    public ResponseEntity<List<OrderResponseDto>> getAllOrder() {
+        List<OrderResponseDto> orderResponseDtoList = orderService.getAll();
+        return ResponseEntity.ok().body(orderResponseDtoList);
     }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<OrderResponseDtoWithProduct> getOrderByUuid(@PathVariable UUID uuid) {
+        OrderResponseDtoWithProduct orderResponseDto = orderService.getByIdWithProduct(uuid);
+        return ResponseEntity.ok().body(orderResponseDto);
+    }
+
+    @GetMapping("/customer/{uuid}")
+    public ResponseEntity<List<OrderResponseDto>> getAllOrderByCustomerUuid(@PathVariable UUID uuid) {
+        List<OrderResponseDto> allByCustomerId = orderService.getAllByCustomerId(uuid);
+        return ResponseEntity.ok().body(allByCustomerId);
+    }
+
+    /*
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -118,19 +102,16 @@ public class OrderServlet extends HttpServlet {
                 resp.setStatus(400);
             } else {
 
-                boolean delete = orderService.deleteById(UUID.fromString(id));
+                orderService.deleteById(UUID.fromString(id));
 
-                if (delete) {
-                    resp.setContentType(CONTENT_TYPE);
-                    resp.setStatus(200);
-                } else {
-                    resp.setStatus(404);
-                }
+                resp.setContentType(CONTENT_TYPE);
+                resp.setStatus(200);
+
             }
 
         } catch (Exception e) {
             resp.setStatus(400);
         }
     }
-
+*/
 }

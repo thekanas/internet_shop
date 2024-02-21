@@ -1,15 +1,40 @@
 package by.stolybko.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @Column(name = "orderid")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private UUID customerId;
     private LocalDateTime createDate;
+
+    @ManyToOne
+    @JoinColumn (name="customerid")
+    private Customer customer;
+
+    @ManyToMany
+    @JoinTable(name = "order_product",
+            joinColumns = @JoinColumn(name = "orderid"),
+            inverseJoinColumns = @JoinColumn(name = "productid"))
     private List<Product> products;
 
     public Order() {

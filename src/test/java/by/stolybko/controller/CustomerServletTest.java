@@ -1,9 +1,9 @@
-package by.stolybko.servlet;
+package by.stolybko.controller;
 
-import by.stolybko.service.dto.ProductRequestDto;
-import by.stolybko.service.dto.ProductResponseDto;
-import by.stolybko.service.impl.ProductServiceImpl;
-import by.stolybko.util.ProductTestData;
+import by.stolybko.service.dto.CustomerRequestDto;
+import by.stolybko.service.dto.CustomerResponseDto;
+import by.stolybko.service.impl.CustomerServiceImpl;
+import by.stolybko.util.CustomerTestData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,26 +20,25 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-import static by.stolybko.util.Constants.CONTENT_TYPE;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 @ExtendWith(MockitoExtension.class)
-class ProductServletTest {
+class CustomerServletTest {
 
     @Mock
-    private ProductServiceImpl productService;
+    private CustomerServiceImpl customerService;
 
     @InjectMocks
-    private ProductServlet productServlet;
+    private CustomerServlet customerServlet;
 
     @Test
-    void doGetWithIdShouldReturnProduct_WhenInvoke() throws IOException, ServletException {
+    void doGetWithIdShouldReturnCustomer_WhenInvoke() throws IOException, ServletException {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -48,26 +47,26 @@ class ProductServletTest {
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);
 
-        UUID uuid = ProductTestData.getProductId();
-        ProductResponseDto productResponseDto = ProductTestData.getProductResponseDto();
+        UUID uuid = CustomerTestData.getCustomerId();
+        CustomerResponseDto customerResponseDto = CustomerTestData.getCustomerResponseDto();
 
-        when(productService.getById(uuid)).thenReturn(productResponseDto);
+        when(customerService.getById(uuid)).thenReturn(customerResponseDto);
         when(request.getParameter("id")).thenReturn("" + uuid);
 
         //when
-        productServlet.doGet(request, response);
+        customerServlet.doGet(request, response);
 
         //then
         verify(response).getWriter();
-        verify(productService).getById(uuid);
+        verify(customerService).getById(uuid);
 
         String responseContent = stringWriter.toString();
-        String expectedContent = "{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"name\":\"SomeProduct\",\"price\":9.99}";
+        String expectedContent = "{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"fullName\":\"Test Name Surname\"}";
         Assertions.assertEquals(expectedContent, responseContent);
     }
 
     @Test
-    void doGetWithoutIdShouldReturnAllProduct_WhenInvoke() throws IOException, ServletException {
+    void doGetWithoutIdShouldReturnAllCustomer_WhenInvoke() throws IOException, ServletException {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -76,22 +75,22 @@ class ProductServletTest {
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);
 
-        ProductResponseDto productResponseDto1 = ProductTestData.getProductResponseDto();
-        ProductResponseDto productResponseDto2 = ProductTestData.getProductResponseDto();
-        List<ProductResponseDto> productResponseDtoList = List.of(productResponseDto1, productResponseDto2);
+        CustomerResponseDto customerResponseDto1 = CustomerTestData.getCustomerResponseDto();
+        CustomerResponseDto customerResponseDto2 = CustomerTestData.getCustomerResponseDto();
+        List<CustomerResponseDto> customerResponseDtoList = List.of(customerResponseDto1, customerResponseDto2);
 
-        when(productService.getAll()).thenReturn(productResponseDtoList);
+        when(customerService.getAll()).thenReturn(customerResponseDtoList);
         when(request.getParameter("id")).thenReturn(null);
 
         //when
-        productServlet.doGet(request, response);
+        customerServlet.doGet(request, response);
 
         //then
         verify(response).getWriter();
-        verify(productService).getAll();
+        verify(customerService).getAll();
 
         String responseContent = stringWriter.toString();
-        String expectedContent = "[{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"name\":\"SomeProduct\",\"price\":9.99},{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"name\":\"SomeProduct\",\"price\":9.99}]";
+        String expectedContent = "[{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"fullName\":\"Test Name Surname\"},{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"fullName\":\"Test Name Surname\"}]";
         Assertions.assertEquals(expectedContent, responseContent);
     }
 
@@ -101,11 +100,11 @@ class ProductServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        ProductRequestDto productRequestDto = ProductTestData.getProductRequestDto();
-        ProductResponseDto productResponseDto = ProductTestData.getProductResponseDto();
+        CustomerRequestDto customerRequestDto = CustomerTestData.getCustomerRequestDto();
+        CustomerResponseDto customerResponseDto = CustomerTestData.getCustomerResponseDto();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(productRequestDto);
+        String json = objectMapper.writeValueAsString(customerRequestDto);
 
         StringReader stringReader = new StringReader(json);
         BufferedReader reader = new BufferedReader(stringReader);
@@ -115,17 +114,17 @@ class ProductServletTest {
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);
 
-        when(productService.save(productRequestDto)).thenReturn(productResponseDto);
+        when(customerService.save(customerRequestDto)).thenReturn(customerResponseDto);
 
         //when
-        productServlet.doPost(request, response);
+        customerServlet.doPost(request, response);
 
         //then
         verify(response).getWriter();
-        verify(productService).save(productRequestDto);
+        verify(customerService).save(customerRequestDto);
 
         String responseContent = stringWriter.toString();
-        String expectedContent = "{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"name\":\"SomeProduct\",\"price\":9.99}";
+        String expectedContent = "{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"fullName\":\"Test Name Surname\"}";
         Assertions.assertEquals(expectedContent, responseContent);
     }
 
@@ -135,12 +134,12 @@ class ProductServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        UUID uuid = ProductTestData.getProductId();
-        ProductRequestDto productRequestDto = ProductTestData.getProductRequestDto();
-        ProductResponseDto productResponseDto = ProductTestData.getProductResponseDto();
+        UUID uuid = CustomerTestData.getCustomerId();
+        CustomerRequestDto customerRequestDto = CustomerTestData.getCustomerRequestDto();
+        CustomerResponseDto customerResponseDto = CustomerTestData.getCustomerResponseDto();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(productRequestDto);
+        String json = objectMapper.writeValueAsString(customerRequestDto);
 
         StringReader stringReader = new StringReader(json);
         BufferedReader reader = new BufferedReader(stringReader);
@@ -151,17 +150,17 @@ class ProductServletTest {
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);
 
-        when(productService.update(uuid, productRequestDto)).thenReturn(productResponseDto);
+        when(customerService.update(uuid, customerRequestDto)).thenReturn(customerResponseDto);
 
         //when
-        productServlet.doPut(request, response);
+        customerServlet.doPut(request, response);
 
         //then
         verify(response).getWriter();
-        verify(productService).update(uuid, productRequestDto);
+        verify(customerService).update(uuid, customerRequestDto);
 
         String responseContent = stringWriter.toString();
-        String expectedContent = "{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"name\":\"SomeProduct\",\"price\":9.99}";
+        String expectedContent = "{\"id\":\"25486810-43dd-41e8-ab60-98aa2d200acb\",\"fullName\":\"Test Name Surname\"}";
         Assertions.assertEquals(expectedContent, responseContent);
     }
 
@@ -172,17 +171,16 @@ class ProductServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        UUID uuid = ProductTestData.getProductId();
+        UUID uuid = CustomerTestData.getCustomerId();
 
-        when(productService.deleteById(uuid)).thenReturn(true);
+        when(customerService.deleteById(uuid)).thenReturn(true);
         when(request.getParameter("id")).thenReturn("" + uuid);
 
         //when
-        productServlet.doDelete(request, response);
+        customerServlet.doDelete(request, response);
 
         //then
-        verify(productService).deleteById(uuid);
-        verify(response).setStatus(200);
+        verify(customerService).deleteById(uuid);
     }
 
     @Test
@@ -191,16 +189,16 @@ class ProductServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        UUID uuid = ProductTestData.getProductId();
+        UUID uuid = CustomerTestData.getCustomerId();
 
-        when(productService.deleteById(uuid)).thenReturn(false);
+        when(customerService.deleteById(uuid)).thenReturn(false);
         when(request.getParameter("id")).thenReturn("" + uuid);
 
         //when
-        productServlet.doDelete(request, response);
+        customerServlet.doDelete(request, response);
 
         //then
-        verify(productService).deleteById(uuid);
+        verify(customerService).deleteById(uuid);
         verify(response).setStatus(404);
     }
 

@@ -1,7 +1,6 @@
-package by.stolybko.servlet;
+package by.stolybko.controller;
 
 import by.stolybko.service.dto.OrderResponseDto;
-import by.stolybko.service.dto.OrderResponseDtoWithProduct;
 import by.stolybko.service.impl.OrderServiceImpl;
 import by.stolybko.util.CustomerTestData;
 import by.stolybko.util.OrderTestData;

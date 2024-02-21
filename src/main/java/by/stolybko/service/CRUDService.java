@@ -8,7 +8,7 @@ public interface CRUDService<RESPONSE, REQUEST> {
 
     RESPONSE getById(UUID id);
 
-    boolean deleteById(UUID id);
+    void deleteById(UUID id);
 
     List<RESPONSE> getAll();
 
