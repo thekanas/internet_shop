@@ -1,11 +1,18 @@
 package by.stolybko.controller;
 
 import by.stolybko.service.ProductService;
+import by.stolybko.service.dto.CustomerRequestDto;
+import by.stolybko.service.dto.CustomerResponseDto;
+import by.stolybko.service.dto.ProductRequestDto;
 import by.stolybko.service.dto.ProductResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,74 +43,22 @@ public class ProductController {
         return ResponseEntity.ok().body(productResponseDto);
     }
 
-
-
-    /*
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            ProductRequestDto productRequestDto = objectMapper.readValue(req.getReader().lines().collect(Collectors.joining()), ProductRequestDto.class);
-            ProductResponseDto productResponseDto = productService.save(productRequestDto);
-
-            resp.setContentType(CONTENT_TYPE);
-            resp.setStatus(200);
-
-            objectMapper.writeValue(resp.getWriter(), productResponseDto);
-
-        } catch (Exception e) {
-            resp.setStatus(400);
-        }
+    @PostMapping
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto productRequestDto) {
+        ProductResponseDto product = productService.save(productRequestDto);
+        return ResponseEntity.status(201).body(product);
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-            String id = req.getParameter("id");
-
-            if (id == null) {
-                resp.setStatus(400);
-            } else {
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                ProductRequestDto productRequestDto = objectMapper.readValue(req.getReader().lines().collect(Collectors.joining()), ProductRequestDto.class);
-                ProductResponseDto productResponseDto = productService.update(UUID.fromString(id), productRequestDto);
-
-                resp.setContentType(CONTENT_TYPE);
-                resp.setStatus(200);
-
-                objectMapper.writeValue(resp.getWriter(), productResponseDto);
-            }
-
-        } catch (Exception e) {
-            resp.setStatus(400);
-        }
+    @PutMapping("/{uuid}")
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable UUID uuid, @RequestBody ProductRequestDto productRequestDto) {
+        ProductResponseDto product = productService.update(uuid, productRequestDto);
+        return ResponseEntity.ok().body(product);
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-            String id = req.getParameter("id");
-
-            if (id == null) {
-                resp.setStatus(400);
-            } else {
-
-                productService.deleteById(UUID.fromString(id));
-
-                resp.setContentType(CONTENT_TYPE);
-                resp.setStatus(200);
-
-            }
-
-        } catch (Exception e) {
-            resp.setStatus(400);
-        }
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteProductByUuid(@PathVariable UUID uuid) {
+        productService.deleteById(uuid);
+        return ResponseEntity.ok().build();
     }
-*/
+
 }

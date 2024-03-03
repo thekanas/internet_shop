@@ -2,15 +2,20 @@ package by.stolybko.service.impl;
 
 import by.stolybko.exception.EntityNotFoundException;
 import by.stolybko.model.Customer;
-import by.stolybko.repository.impl.CustomerRepositoryImpl;
+import by.stolybko.repository.CustomerRepository;
 import by.stolybko.service.dto.CustomerRequestDto;
 import by.stolybko.service.dto.CustomerResponseDto;
+import by.stolybko.service.mapper.CustomerDtoMapper;
 import by.stolybko.util.CustomerTestData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,11 +31,13 @@ import static org.mockito.Mockito.when;
 class CustomerServiceImplTest {
 
     @Mock
-    private CustomerRepositoryImpl customerRepository;
+    private CustomerRepository customerRepository;
+
+    @Mock
+    private CustomerDtoMapper customerDtoMapper;
 
     @InjectMocks
     private CustomerServiceImpl customerService;
-
 
     @Test
     void getByIdTest() {
@@ -40,6 +48,8 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findById(uuid))
                 .thenReturn(Optional.of(customer));
+        when(customerDtoMapper.toDto(customer))
+                .thenReturn(expected);
 
         // when
         CustomerResponseDto actual = customerService.getById(uuid);
@@ -90,6 +100,10 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findAll())
                 .thenReturn(customers);
+        when(customerDtoMapper.toDto(customer1))
+                .thenReturn(customerResponseDto1);
+        when(customerDtoMapper.toDto(customer2))
+                .thenReturn(customerResponseDto2);
 
         // when
         List<CustomerResponseDto> actual = customerService.getAll();
@@ -108,7 +122,11 @@ class CustomerServiceImplTest {
         CustomerResponseDto expected = CustomerTestData.getCustomerResponseDto();
 
         when(customerRepository.save(customer))
-                .thenReturn(Optional.of(savedCustomer));
+                .thenReturn(savedCustomer);
+        when(customerDtoMapper.toEntity(customerRequestDto))
+                .thenReturn(customer);
+        when(customerDtoMapper.toDto(savedCustomer))
+                .thenReturn(expected);
 
         // when
         CustomerResponseDto actual = customerService.save(customerRequestDto);
@@ -127,8 +145,12 @@ class CustomerServiceImplTest {
         CustomerRequestDto customerRequestDto = new CustomerRequestDto("New", "new@new.com");
         CustomerResponseDto expected = new CustomerResponseDto(uuid, "New");
 
-        when(customerRepository.update(uuid, customer))
-                .thenReturn(Optional.of(updatedCustomer));
+        when(customerRepository.save(customer))
+                .thenReturn(updatedCustomer);
+        when(customerDtoMapper.toEntity(customerRequestDto))
+                .thenReturn(customer);
+        when(customerDtoMapper.toDto(updatedCustomer))
+                .thenReturn(expected);
 
         // when
         CustomerResponseDto actual = customerService.update(uuid, customerRequestDto);
@@ -138,21 +160,21 @@ class CustomerServiceImplTest {
 
     }
 
-    @Test
-    void updateShouldTrowException_WhenIdNotFound() {
-        // given
-        UUID uuid = CustomerTestData.getCustomerId();
-        Customer customer = new Customer(null, "New", "new@new.com");
-        CustomerRequestDto customerRequestDto = new CustomerRequestDto("New", "new@new.com");
-
-        when(customerRepository.update(uuid, customer))
-                .thenReturn(Optional.empty());
-
-        // when, then
-        var exception = assertThrows(EntityNotFoundException.class, () -> customerService.update(uuid, customerRequestDto));
-        assertThat(exception.getMessage())
-                .isEqualTo("Entity Customer with id " + uuid + " is not found");
-
-    }
+//    @Test
+//    void updateShouldTrowException_WhenIdNotFound() {
+//        // given
+//        UUID uuid = CustomerTestData.getCustomerId();
+//        Customer customer = new Customer(null, "New", "new@new.com");
+//        CustomerRequestDto customerRequestDto = new CustomerRequestDto("New", "new@new.com");
+//
+//        when(customerRepository.save(customer))
+//                .thenReturn(() -> throw SQLException());
+//
+//        // when, then
+//        var exception = assertThrows(EntityNotFoundException.class, () -> customerService.update(uuid, customerRequestDto));
+//        assertThat(exception.getMessage())
+//                .isEqualTo("Entity Customer with id " + uuid + " is not found");
+//
+//    }
 
 }

@@ -5,10 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,9 +20,6 @@ public class Customer {
     private UUID id;
     private String fullName;
     private String email;
-
-    @OneToMany(mappedBy = "customer")
-    private List<Order> orders;
 
     public Customer() {
     }
@@ -57,14 +52,6 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
     }
 
     @Override

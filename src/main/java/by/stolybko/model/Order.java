@@ -10,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,11 +25,12 @@ public class Order {
     @Column(name = "orderid")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private UUID customerId;
+
+    @CreationTimestamp
     private LocalDateTime createDate;
 
     @ManyToOne
-    @JoinColumn (name="customerid")
+    @JoinColumn(name = "customerid")
     private Customer customer;
 
     @ManyToMany
@@ -40,9 +42,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(UUID id, UUID customerId, LocalDateTime createDate, List<Product> products) {
+    public Order(UUID id, Customer customer, LocalDateTime createDate, List<Product> products) {
         this.id = id;
-        this.customerId = customerId;
+        this.customer = customer;
         this.createDate = createDate;
         this.products = products;
     }
@@ -55,12 +57,12 @@ public class Order {
         this.id = id;
     }
 
-    public UUID getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public LocalDateTime getCreateDate() {
@@ -84,19 +86,19 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(id, order.id) && customerId.equals(order.customerId) && Objects.equals(createDate, order.createDate);
+        return Objects.equals(id, order.id) && customer.getId().equals(order.customer.getId()) && Objects.equals(createDate, order.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId, createDate);
+        return Objects.hash(id, customer.getId(), createDate);
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", customerId=" + customerId +
+                ", customerId=" + customer.getId() +
                 ", createDate=" + createDate +
                 ", products=" + products +
                 '}';
