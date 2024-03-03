@@ -147,3 +147,16 @@ DELETE http://localhost:8080/orders?id=392a0725-13ca-4f5c-9320-de315386d43e
 ---
 ![test1](img/test1.png)
 ![test2](img/test2.png)
+
+
+# Update
+
+1) Переписать второе задание на Spring
+2) Запрещено использовать Boot, Lombok
+3) Сервис должен возвращать DTO
+4) Для маппинга из Entity в DTO и наоборот использовать mapstruckt
+
+Отчёт о покрытии тестами
+---
+![test1](img/test3.png)
+![test2](img/test4.png)
