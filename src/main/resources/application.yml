@@ -1,6 +1,16 @@
-db:
+database:
   user: postgres
   password: pass
   url: jdbc:postgresql://localhost:5433/internet_shop
   driver: org.postgresql.Driver
   pool.size: 10
+
+hibernate:
+  show_sql: true
+  format_sql: true
+  hbm2ddl.auto: validate
+  dialect: org.hibernate.dialect.PostgresPlusDialect
+
+liquibase:
+  changelog: db.changelog/db.changelog-master.yaml
+  databaseAutoInitialization: true

@@ -1,8 +1,11 @@
 package by.stolybko.repository;
 
 import by.stolybko.model.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-public interface CustomerRepository extends CRUDRepository<Customer, UUID> {
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 }

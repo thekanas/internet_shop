@@ -32,19 +32,19 @@ public class OrderTestData {
     }
 
     public static Order getOrder() {
-        return new Order(orderId, customerId, createDate, products);
+        return new Order(orderId, CustomerTestData.getCustomer(), createDate, products);
     }
 
     public static OrderResponseDto getOrderResponseDto() {
-        return new OrderResponseDto(orderId, customerId, createDate);
+        return new OrderResponseDto(orderId, CustomerTestData.getCustomer().getId(), createDate);
     }
 
     public static OrderResponseDtoWithProduct getOrderResponseDtoWithProduct() {
-        return new OrderResponseDtoWithProduct(orderId, customerId, createDate, productsResponse);
+        return new OrderResponseDtoWithProduct(orderId, CustomerTestData.getCustomer().getId(), createDate, productsResponse);
     }
 
     public static OrderRequestDto getOrderRequestDto() {
-        return new OrderRequestDto(customerId, productsUuidList);
+        return new OrderRequestDto(CustomerTestData.getCustomer().getId(), productsUuidList);
     }
 
     public static List<Product> getProducts() {

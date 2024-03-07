@@ -7,19 +7,24 @@ import by.stolybko.service.CustomerService;
 import by.stolybko.service.dto.CustomerRequestDto;
 import by.stolybko.service.dto.CustomerResponseDto;
 import by.stolybko.service.mapper.CustomerDtoMapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
+@Transactional(readOnly = true)
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerDtoMapper customerDtoMapper;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    @Autowired
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerDtoMapper customerDtoMapper) {
         this.customerRepository = customerRepository;
-        this.customerDtoMapper = Mappers.getMapper(CustomerDtoMapper.class);
+        this.customerDtoMapper = customerDtoMapper;
     }
 
     @Override
@@ -30,8 +35,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean deleteById(UUID id) {
-        return customerRepository.deleteById(id);
+    @Transactional
+    public void deleteById(UUID id) {
+        customerRepository.deleteById(id);
     }
 
     @Override
@@ -42,16 +48,19 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerResponseDto save(CustomerRequestDto customerRequestDto) {
-        Customer savedCustomer = customerRepository.save(customerDtoMapper.toEntity(customerRequestDto))
-                .orElseThrow();
+        Customer savedCustomer = customerRepository.save(customerDtoMapper.toEntity(customerRequestDto));
         return customerDtoMapper.toDto(savedCustomer);
     }
 
     @Override
+    @Transactional
     public CustomerResponseDto update(UUID id, CustomerRequestDto customerRequestDto) {
-        Customer updatedCustomer = customerRepository.update(id, customerDtoMapper.toEntity(customerRequestDto))
-                .orElseThrow(() -> new EntityNotFoundException(id, Customer.class));
+        Customer updateCustomer = customerDtoMapper.toEntity(customerRequestDto);
+        updateCustomer.setId(id);
+
+        Customer updatedCustomer = customerRepository.save(updateCustomer);
         return customerDtoMapper.toDto(updatedCustomer);
     }
 }

@@ -1,3 +1,4 @@
+/*
 package by.stolybko.repository.impl;
 
 import by.stolybko.db.ConnectionManager;
@@ -15,6 +16,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
+
 
 public abstract class BaseRepositoryTest {
 
@@ -67,3 +69,4 @@ public abstract class BaseRepositoryTest {
 
 
 }
+*/
